@@ -22,6 +22,35 @@ var budgetController = (function() {
 			inc: 0
 		}
 	};
+
+	return {
+		addItem: function(type, desc, val) {
+			var newItem, ID;
+
+			// Create new ID - always last existing ID from a specified type + 1
+			if (data.allItems[type].length > 0) {
+				ID = data.allItems[type][data.allItems[type].length - 1].id + 1;
+			} else {
+				ID = 0;
+			}
+
+			// Create new item based on 'inc' or 'exp' type
+			if (type === "exp") {
+				newItem = new Expense(ID, desc, val);
+			} else if (type === "inc") {
+				newItem = new Income(ID, desc, val);
+			}
+
+			// Push it into the data structure
+			data.allItems[type].push(newItem);
+
+			// Return the new element
+			return newItem;
+		},
+		testing: function() {
+			console.log(data);
+		}
+	};
 })();
 
 // UI CONTROLLER
@@ -36,9 +65,10 @@ var UIController = (function() {
 	return {
 		getInput: function() {
 			return {
-				type: document.querySelector(".add__type").value, // Will be either inc or exp
-				description: document.querySelector(".add__description").value,
-				value: document.querySelector(".add__value").value
+				type: document.querySelector(DOMstrings.inputType).value, // Will be either inc or exp
+				description: document.querySelector(DOMstrings.inputDescription)
+					.value,
+				value: document.querySelector(DOMstrings.inputValue).value
 			};
 		},
 		getDOMstrings: function() {
@@ -65,11 +95,20 @@ var controller = (function(budgetCtrl, UICtrl) {
 	};
 
 	var ctrlAddItem = function() {
+		var input, newIteml;
+
 		// 1. Get the field input data
-		var input = UICtrl.getInput();
+		input = UICtrl.getInput();
 
 		// 2. Add the item to the budget controller
+		newItem = budgetController.addItem(
+			input.type,
+			input.description,
+			input.value
+		);
+
 		// 3. Add the item to the UI
+
 		// 4. Calculate the budget
 		// 5. Display the budget on the UI
 	};
